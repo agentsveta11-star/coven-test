@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#100d20">
+<title>COVEN · Магическая социальная сеть</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="./coven.css">
+<script src="./config.js"></script>
+<style>
+:root{--bg:#100d20;--panel:#1b1530;--panel2:#241b3b;--gold:#e6c77a;--lilac:#d7b9ff;--text:#f7f1ff;--muted:#b9adc9;--line:#392b52;--green:#a8d5bc}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#392454 0,transparent 45%),var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input,textarea,select{font:inherit}button{cursor:pointer}.app{max-width:760px;margin:auto;min-height:100dvh;padding:16px 16px 100px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.brand{display:flex;gap:11px;align-items:center}.sigil{width:48px;height:48px;border:1px solid #a88ad5;border-radius:16px;display:grid;place-items:center;background:linear-gradient(145deg,#34204f,#151023);font-size:25px;color:var(--gold);box-shadow:0 0 24px #9c68d522}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:2px;text-transform:uppercase}.brand h1{font-size:22px;margin:0;font-weight:700}.iconbtn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:14px;padding:10px 12px}
+.view{display:none}.view.active{display:block}.hero{border:1px solid #57416c;border-radius:24px;padding:22px;background:linear-gradient(135deg,#2d1e43,#18132a 70%);position:relative;overflow:hidden;margin-bottom:16px}.hero:after{content:"✦";position:absolute;right:18px;top:10px;font-size:70px;color:#e6c77a22}.hero .small{color:var(--muted);font-size:13px}.hero h2{font-size:26px;line-height:1.15;margin:10px 0}.hero p{color:#d0c2df;margin:0 0 16px;max-width:420px}.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid #705887;border-radius:999px;padding:7px 11px;color:var(--lilac);font-size:12px}.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.sectionhead h3{margin:0;font-size:17px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile,.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:15px;text-align:left;color:var(--text);min-width:0}.tile{min-height:118px}.tile .emoji{font-size:25px;margin-bottom:8px}.tile strong{display:block;font-size:14px}.tile small{display:block;color:var(--muted);margin-top:4px;font-size:12px}.card{margin-bottom:10px}.card h3,.card h4{margin:0 0 6px}.card p{margin:0;color:var(--muted);font-size:14px}.row{display:flex;gap:10px;align-items:center}.row>*:first-child{flex:1}.field{width:100%;border:1px solid var(--line);background:#120e22;color:var(--text);border-radius:13px;padding:12px;margin:6px 0 12px;outline:none}.field:focus{border-color:#a98acb}textarea.field{min-height:110px;resize:vertical}.primary{border:0;background:linear-gradient(135deg,#e6c77a,#b88b51);color:#1b1025;font-weight:700;border-radius:13px;padding:12px 16px}.secondary{border:1px solid var(--line);background:#211833;color:var(--text);border-radius:13px;padding:10px 13px}.danger{color:#ffb6bd}.nav{position:fixed;z-index:5;bottom:0;left:0;right:0;padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:#100d20ed;border-top:1px solid var(--line);backdrop-filter:blur(18px);display:flex;justify-content:center}.navinner{width:100%;max-width:760px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.nav button{background:transparent;color:var(--muted);border:0;border-radius:12px;padding:7px 2px;font-size:10px}.nav button span{display:block;font-size:20px;margin-bottom:2px}.nav button.active{color:var(--gold);background:#2a203d}.empty{text-align:center;padding:26px 16px;color:var(--muted)}.tag{display:inline-block;border-radius:8px;padding:3px 8px;background:#39284f;color:#d9c1f5;font-size:11px;margin:4px 4px 0 0}.item-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.divider{height:1px;background:var(--line);margin:14px 0}.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:#332448;border:1px solid #775b90;border-radius:12px;padding:10px 15px;display:none;z-index:10;max-width:90%;text-align:center}.notice{font-size:12px;color:var(--muted);margin-top:12px}.moonicon{font-size:38px;color:var(--gold)}.inline-link{color:var(--gold);text-decoration:underline;cursor:pointer}@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding:28px}.hero h2{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand"><div class="sigil">✧</div><div><div class="eyebrow">11:11 time</div><h1>COVEN</h1></div></div>
+  <button class="iconbtn" id="searchBtn" aria-label="Поиск">⌕</button>
+</header>
+
+<main>
+<section class="view active" id="feed">
+  <div class="coven-hero"><div class="coven-kicker">✦ Магическая социальная сеть · 11:11 time</div><h2>Ведьмы находят своих.</h2><p>Делись историями, находи единомышленников и создавай свою магическую вселенную.</p></div>
+  <div id="feedStatus" aria-live="polite"></div>
+  <div class="coven-compose-prompt"><div id="postAvatar" class="coven-avatar">✦</div><button data-go="compose">Что сегодня происходит в твоём мире, <span id="welcomeName">ведьма</span>?</button><button class="round-btn" data-go="compose" aria-label="Создать публикацию">＋</button></div>
+  <div class="coven-split"><div class="sectionhead"><h3>Лента ковена</h3></div><button class="coven-linkbtn" id="refreshFeed">Обновить ↻</button></div>
+  <div class="coven-chiprow"><button class="coven-chip active" data-category="">Все</button><button class="coven-chip" data-category="Практики">Практики</button><button class="coven-chip" data-category="Таро">Таро</button><button class="coven-chip" data-category="Травы">Травы</button><button class="coven-chip" data-category="Ритуалы">Ритуалы</button><button class="coven-chip" data-category="Вопросы">Вопросы</button><button class="coven-chip" data-category="Лунный дневник">Лунный дневник</button><button class="coven-chip" data-category="Творчество">Творчество</button><button class="coven-chip" id="followingToggle">Мои подписки</button></div>
+  <div id="feedList"></div><button class="secondary coven-hidden" id="morePosts" style="width:100%">Показать ещё ↓</button>
+</section>
+<section class="view" id="people">
+  <div class="sectionhead"><h3>Ведьмы рядом по духу</h3></div>
+  <p class="coven-form-hint">Найди участниц по магическому имени или Telegram username.</p>
+  <input class="field" id="peopleSearch" placeholder="Поиск по именам…" maxlength="60" autocomplete="off">
+  <div id="peopleStatus" aria-live="polite"></div><div id="peopleList"></div>
+</section>
+<section class="view" id="compose">
+  <div class="sectionhead"><h3>Новое заклинание для ленты</h3></div>
+  <div id="composeStatus" aria-live="polite"></div>
+  <div class="card"><div class="coven-kicker">✦ Говори своим голосом</div>
+   <textarea class="field" id="postText" maxlength="2500" rows="6" placeholder="История, вопрос, ритуал, мысли или открытие…"></textarea>
+   <label class="coven-form-hint" for="postCategory">Тема публикации</label>
+   <select class="field" id="postCategory"><option>Практики</option><option>Таро</option><option>Травы</option><option>Ритуалы</option><option>Вопросы</option><option>Лунный дневник</option><option>Творчество</option></select>
+   <label class="coven-image-picker">＋ Добавить фотографию (JPG, PNG, WebP, до 5 МБ)<input type="file" id="postImage" accept="image/jpeg,image/png,image/webp"></label>
+   <div id="postPreview"></div>
+   <button class="primary" id="publishPost" style="width:100%">Опубликовать в COVEN ✦</button>
+   <p class="coven-safety">Публикации видны участникам сообщества. Не публикуй личные данные других людей без согласия и не давай опасных медицинских советов.</p>
+  </div>
+</section>
+<section class="view" id="profile">
+  <div class="sectionhead"><h3>Мой магический профиль</h3><button class="secondary" data-go="settings">⚙</button></div>
+  <div id="profileStatus" aria-live="polite"></div><div id="myProfile"></div>
+  <div class="sectionhead"><h3>Мои публикации</h3></div><div id="myPosts"></div>
+</section>
+<section class="view" id="edit-profile">
+  <div class="sectionhead"><h3>Моя магическая сущность</h3></div>
+  <div class="card"><label for="editName">Имя в COVEN</label><input class="field" id="editName" maxlength="64" placeholder="Магическое имя">
+   <label for="editElement">Твоя стихия</label><select class="field" id="editElement"><option>Луна</option><option>Огонь</option><option>Вода</option><option>Воздух</option><option>Земля</option><option>Эфир</option></select>
+   <label for="editBio">О себе</label><textarea class="field" id="editBio" maxlength="500" placeholder="О чём ты мечтаешь и чем делишься с ковеном?"></textarea>
+   <button class="primary" id="saveProfile">Сохранить профиль</button><button class="secondary" data-go="profile" style="margin-left:7px">Отмена</button>
+  </div>
+</section>
+<section class="view" id="blocked-users">
+  <div class="sectionhead"><h3>Заблокированные</h3><button class="secondary" data-go="settings">Назад</button></div>
+  <div id="blockedList"></div>
+</section>
+<section class="view" id="user-profile">
+  <div class="sectionhead"><h3>Участница ковена</h3><button class="secondary" data-go="people">Назад</button></div>
+  <div id="otherProfile"></div><div class="sectionhead"><h3>Публикации</h3></div><div id="otherPosts"></div>
+</section>
+<section class="view" id="comments">
+  <div class="sectionhead"><h3>Обсуждение</h3><button class="secondary" data-go="feed">В ленту</button></div>
+  <div id="commentsList"></div>
+  <div class="card"><h3>Оставить комментарий</h3><textarea class="field" id="commentText" maxlength="600" placeholder="С уважением к другим участникам…"></textarea><button class="primary" id="sendComment">Отправить</button></div>
+</section>
+<section class="view" id="home">
+  <div class="hero">
+    <div class="small" id="todayLabel">ТВОЁ ПРОСТРАНСТВО ПРАКТИКИ</div>
+    <h2>Место, где намерение встречается с действием.</h2>
+    <p>Собирай знания, записывай наблюдения и создавай собственную Книгу Теней.</p>
+    <span class="pill" id="moonPill">☾ Лунный календарь</span>
+  </div>
+  <div class="sectionhead"><h3>Твоё пространство</h3><span class="muted">быстрый доступ</span></div>
+  <div class="grid">
+    <button class="tile" data-go="moon"><div class="emoji">🌙</div><strong>Лунный календарь</strong><small id="moonShort">Фаза и заметки дня</small></button>
+    <button class="tile" data-go="book"><div class="emoji">📖</div><strong>Книга Теней</strong><small>Личные записи и открытия</small></button>
+    <button class="tile" data-go="library"><div class="emoji">✧</div><strong>Энциклопедия</strong><small>Символы, травы, камни</small></button>
+    <button class="tile" data-go="rituals"><div class="emoji">🕯️</div><strong>Практики</strong><small>Намерения и ритуалы</small></button>
+  </div>
+  <div class="sectionhead"><h3>Моя последняя запись</h3><button class="secondary" data-go="book">Все записи</button></div>
+  <div id="latestEntry"></div>
+  <p class="notice">Практики в приложении — инструмент личной рефлексии, а не гарантия сверхъестественного результата. Не используй огонь, растения или минералы без соблюдения правил безопасности.</p>
+</section>
+
+<section class="view" id="moon">
+  <div class="sectionhead"><h3>Лунный календарь</h3><span class="muted" id="moonDate"></span></div>
+  <div class="card">
+    <div class="row"><div><div class="eyebrow">Приблизительная фаза</div><h2 id="moonName">Растущая Луна</h2><p id="moonDesc">Наблюдай за своим состоянием и выбирай намерение осознанно.</p></div><div class="moonicon" id="moonEmoji">🌔</div></div>
+    <div class="divider"></div><div class="row"><div><span class="muted">Освещённость</span><br><strong id="illumination">—</strong></div><div><span class="muted">Возраст Луны</span><br><strong id="moonAge">—</strong></div></div>
+  </div>
+  <div class="card"><h3>Наблюдение дня</h3><p>Какие чувства, мысли или события ты замечаешь сегодня? Это не предсказание, а личная точка наблюдения.</p><textarea class="field" id="moonNote" placeholder="Запиши наблюдения…"></textarea><button class="primary" id="saveMoon">Сохранить наблюдение</button></div>
+</section>
+
+<section class="view" id="book">
+  <div class="sectionhead"><h3>Книга Теней</h3><span class="muted" id="entryCount">0 записей</span></div>
+  <div class="card"><h3 id="entryFormTitle">Новая запись</h3>
+    <input class="field" id="entryTitle" placeholder="Название записи">
+    <select class="field" id="entryType"><option>Наблюдение</option><option>Сон</option><option>Практика</option><option>Намерение</option><option>Идея</option></select>
+    <textarea class="field" id="entryBody" placeholder="Что произошло? Что ты заметила? Что хочешь сохранить?"></textarea>
+    <div class="row"><button class="primary" id="saveEntry">Сохранить запись</button><button class="secondary" id="cancelEdit" style="display:none">Отмена</button></div>
+  </div>
+  <div class="sectionhead"><h3>Сохранённое</h3></div><div id="entriesList"></div>
+</section>
+
+<section class="view" id="library">
+  <div class="sectionhead"><h3>Энциклопедия</h3></div>
+  <input class="field" id="librarySearch" placeholder="Поиск по гримуару…">
+  <div id="libraryList"></div>
+  <p class="notice">Справочные материалы описывают культурные и символические традиции; значения могут различаться в разных системах.</p>
+</section>
+
+<section class="view" id="rituals">
+  <div class="sectionhead"><h3>Конструктор практик</h3></div>
+  <div class="card"><h3>Выбери намерение</h3><p>Сформулируй, чему хочешь уделить внимание, и собери безопасную практику без обещаний гарантированного результата.</p>
+  <select class="field" id="intent"><option value="grounding">Заземление и спокойствие</option><option value="selflove">Забота о себе</option><option value="clarity">Ясность и фокус</option><option value="release">Отпустить переживания</option><option value="abundance">Отношение к изобилию</option></select>
+  <button class="primary" id="buildPractice">Собрать практику</button></div>
+  <div id="practiceResult"></div>
+  <div class="card"><h3>Сохранить в Книгу Теней</h3><p>После создания практики можно добавить её в личный дневник.</p><button class="secondary" id="savePractice" disabled>Сохранить текущую практику</button></div>
+</section>
+
+<section class="view" id="search">
+  <div class="sectionhead"><h3>Поиск по Гримуару</h3></div>
+  <input class="field" id="globalSearch" placeholder="Например: аметист, Луна, намерение…">
+  <div id="searchResults"></div>
+</section>
+
+<section class="view" id="settings">
+  <div class="sectionhead"><h3>Настройки</h3></div>
+  <div class="card"><h3>Твои данные</h3><p>Записи хранятся локально в браузере этого устройства. Очистка данных браузера может удалить их. Для синхронизации между устройствами понадобится сервер и база данных.</p></div>
+  <div class="card"><h3>Правила сообщества</h3><p>Обсуждаем символические практики уважительно и без травли. Фотографии и публикации в ленте видны другим пользователям. <a href="./rules.html" target="_blank" rel="noopener" style="color:var(--gold)">Правила COVEN</a> · <a href="./privacy.html" target="_blank" rel="noopener" style="color:var(--gold)">Приватность</a></p><button class="secondary" data-go="blocked-users">Заблокированные участники</button></div>
+  <div class="card"><h3>Удалить аккаунт COVEN</h3><p>Удалит твой профиль, публикации, комментарии, подписки и загруженные фотографии с сервера. Личные записи Книги Теней на устройстве сохранятся.</p><button class="secondary danger" id="deleteAccount">Удалить аккаунт и публикации</button></div>
+  <div class="card"><h3>Экспорт Книги Теней</h3><p>Скачай резервную копию личных записей в формате JSON.</p><button class="primary" id="exportData">Экспортировать записи</button></div>
+  <div class="card"><h3>Удаление данных</h3><p>Удалит записи и наблюдения, сохранённые этим приложением на данном устройстве.</p><button class="secondary danger" id="clearData">Удалить локальные данные</button></div>
+  <p class="notice">Версия COVEN 0.2 · социальная сеть (с сервером) + личный Гримуар (локально)</p>
+</section>
+</main>
+</div>
+
+<nav class="nav" aria-label="Главная навигация"><div class="navinner">
+  <button class="active" data-go="feed"><span>⌂</span>Лента</button>
+  <button data-go="people"><span>✦</span>Люди</button>
+  <button data-go="compose"><span>⊕</span>Создать</button>
+  <button data-go="home"><span>☾</span>Гримуар</button>
+  <button data-go="profile"><span>♙</span>Профиль</button>
+</div></nav>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+const tg=window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#100d20');tg.setBackgroundColor('#100d20')}catch(e){}}
+const $=id=>document.getElementById(id);
+const STORE='grimuar_1111_v1';
+let data=loadData(), editingId=null, currentPractice=null;
+function loadData(){try{return JSON.parse(localStorage.getItem(STORE))||{entries:[],moonNotes:{}}}catch(e){return {entries:[],moonNotes:{}}}}
+function saveData(){localStorage.setItem(STORE,JSON.stringify(data))}
+function toast(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2300)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function dateLabel(d=new Date()){return d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===id));if(id==='book')renderEntries();if(id==='home')renderLatest();if(id==='library')renderLibrary();if(id==='search')$('globalSearch').focus();window.scrollTo({top:0,behavior:'smooth'});window.onCovenView?.(id)}
+window.covenGo=showView;window.covenToast=toast;
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.go)));
+$('searchBtn').onclick=()=>showView('search');
+const epoch=Date.UTC(2000,0,6,18,14), synodic=29.530588853;
+function moonInfo(d=new Date()){let days=(d.getTime()-epoch)/86400000;let age=((days%synodic)+synodic)%synodic;let frac=age/synodic;let illum=(1-Math.cos(2*Math.PI*frac))/2;let phases=[['Новолуние','🌑','Время обозначить намерение и начать цикл наблюдений.'],['Растущий серп','🌒','Можно выбрать небольшой шаг и отслеживать, что помогает двигаться вперёд.'],['Первая четверть','🌓','Подходит для проверки плана и внимательного выбора следующего действия.'],['Растущая Луна','🌔','Замечай рост, закрепляй полезные привычки и наблюдай за результатами.'],['Полнолуние','🌕','Пауза для подведения итогов и записи того, что стало заметнее.'],['Убывающая Луна','🌖','Можно пересмотреть нагрузку и решить, от чего стоит отказаться.'],['Последняя четверть','🌗','Подведи итоги цикла и освободи место для новых задач.'],['Убывающий серп','🌘','Выдели время на отдых, завершение дел и спокойное наблюдение.']];let ix=Math.round(frac*8)%8;return {age,illum,phase:phases[ix]}}
+function renderMoon(){let m=moonInfo();$('moonName').textContent=m.phase[0];$('moonEmoji').textContent=m.phase[1];$('moonDesc').textContent=m.phase[2];$('illumination').textContent=Math.round(m.illum*100)+'%';$('moonAge').textContent=m.age.toFixed(1)+' суток';$('moonDate').textContent=dateLabel();$('moonPill').textContent=m.phase[1]+' '+m.phase[0];$('moonShort').textContent=m.phase[0]+' · '+Math.round(m.illum*100)+'%';$('todayLabel').textContent=dateLabel().toUpperCase();$('moonNote').value=data.moonNotes[new Date().toISOString().slice(0,10)]||''}
+$('saveMoon').onclick=()=>{data.moonNotes[new Date().toISOString().slice(0,10)]=$('moonNote').value;saveData();toast('Наблюдение сохранено')};
+function renderLatest(){let e=data.entries[0];$('latestEntry').innerHTML=e?`<div class="card"><div class="eyebrow">${esc(e.type)} · ${esc(e.date)}</div><h3>${esc(e.title||'Без названия')}</h3><p>${esc(e.body).slice(0,180)}${e.body.length>180?'…':''}</p></div>`:'<div class="card"><p>Здесь появится твоя последняя запись. Сохрани первое наблюдение в Книге Теней.</p><button class="secondary" data-go="book">Создать запись</button></div>';$('latestEntry').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showView('book'))}
+function resetEntryForm(){$('entryTitle').value='';$('entryBody').value='';$('entryType').value='Наблюдение';editingId=null;$('entryFormTitle').textContent='Новая запись';$('saveEntry').textContent='Сохранить запись';$('cancelEdit').style.display='none'}
+$('saveEntry').onclick=()=>{let title=$('entryTitle').value.trim(),body=$('entryBody').value.trim();if(!title&&!body){toast('Добавь название или текст записи');return}let obj={id:editingId||String(Date.now()),title:title||'Без названия',body,type:$('entryType').value,date:dateLabel()};if(editingId){let i=data.entries.findIndex(e=>e.id===editingId);if(i>=0)data.entries[i]=obj}else data.entries.unshift(obj);saveData();resetEntryForm();renderEntries();renderLatest();toast('Запись сохранена')};
+$('cancelEdit').onclick=resetEntryForm;
+function renderEntries(){ $('entryCount').textContent=data.entries.length+' записей';$('entriesList').innerHTML=data.entries.length?data.entries.map(e=>`<article class="card"><div class="eyebrow">${esc(e.type)} · ${esc(e.date)}</div><h3>${esc(e.title)}</h3><p>${esc(e.body).replace(/\n/g,'<br>')}</p><div class="item-actions"><button class="secondary" data-edit="${esc(e.id)}">Изменить</button><button class="secondary danger" data-delete="${esc(e.id)}">Удалить</button></div></article>`).join(''):'<div class="empty">Пока нет записей.<br>Начни с того, что важно сохранить.</div>';
+$('entriesList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{let e=data.entries.find(x=>x.id===b.dataset.edit);if(!e)return;editingId=e.id;$('entryTitle').value=e.title;$('entryBody').value=e.body;$('entryType').value=e.type;$('entryFormTitle').textContent='Редактирование записи';$('saveEntry').textContent='Сохранить изменения';$('cancelEdit').style.display='inline-block';window.scrollTo({top:0,behavior:'smooth'})});
+$('entriesList').querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{if(confirm('Удалить эту запись?')){data.entries=data.entries.filter(x=>x.id!==b.dataset.delete);saveData();renderEntries();renderLatest();toast('Запись удалена')}})}
+let library=[
+{title:'Аметист',category:'Минералы',tags:'камни фокус спокойствие',body:'В современной символике часто связывается с ясностью и созерцанием. В разных культурах значения камней различаются. Не используй минералы для приготовления настоев или употребления внутрь.'},
+{title:'Обсидиан',category:'Минералы',tags:'камни границы символ',body:'В некоторых современных практиках символизирует границы и самоанализ. Это вулканическое стекло: края могут быть острыми, обращайся осторожно.'},
+{title:'Розовый кварц',category:'Минералы',tags:'камни любовь забота',body:'Часто используется как символ мягкости, принятия и заботы о себе. Можно связать его с письменным упражнением: «Как я могу проявить к себе доброту сегодня?»'},
+{title:'Свеча',category:'Инструменты',tags:'огонь ритуал намерение',body:'Свеча может служить символическим фокусом внимания. Не оставляй открытый огонь без присмотра, держи вдали от ткани, волос, детей и животных. Можно заменить LED-свечой.'},
+{title:'Соль',category:'Материалы',tags:'очищение символ пространство',body:'В ряде народных традиций соль символически связывают с очищением и границами. Не рассыпай её там, где это может навредить растениям или животным.'},
+{title:'Лавровый лист',category:'Растения',tags:'трава намерение традиция',body:'В разных исторических традициях лавр связывали с победой и признанием. Запиши цель на бумаге вместо сжигания листа. Не употребляй растения как средство лечения без надёжной медицинской консультации.'},
+{title:'Пентаграмма',category:'Символы',tags:'символ защита традиция',body:'Пятиконечная звезда встречается в разных исторических и современных символических системах. Её смысл зависит от контекста и традиции; не существует одного универсального толкования.'},
+{title:'Колесо года',category:'Календарь',tags:'сезоны солнцестояние равноденствие',body:'Современное Колесо года объединяет восемь сезонных праздников в некоторых языческих традициях. Можно использовать даты как повод замечать сезонные изменения и подводить личные итоги.'},
+{title:'Книга Теней',category:'Практики',tags:'дневник записи наблюдение',body:'Личный дневник для сохранения практик, размышлений и результатов. Полезно записывать дату, намерение, ход упражнения и то, что ты заметила после него.'},
+{title:'Заземление',category:'Практики',tags:'дыхание спокойствие фокус',body:'Короткое упражнение: почувствуй опору под ногами, назови пять вещей, которые видишь, и сделай несколько комфортных вдохов. Остановись, если почувствуешь дискомфорт.'}
+];
+function renderLibrary(q=''){let items=library.filter(x=>(x.title+' '+x.category+' '+x.tags+' '+x.body).toLowerCase().includes(q.toLowerCase()));$('libraryList').innerHTML=items.map((x,i)=>`<article class="card"><div class="eyebrow">${esc(x.category)}</div><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p><div>${x.tags.split(' ').slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div><div class="item-actions"><button class="secondary" data-save-lib="${i}">Записать в Книгу Теней</button></div></article>`).join('')||'<div class="empty">Ничего не найдено.</div>'; $('libraryList').querySelectorAll('[data-save-lib]').forEach(b=>b.onclick=()=>{let x=items[Number(b.dataset.saveLib)];data.entries.unshift({id:String(Date.now()),title:x.title,type:'Заметка из энциклопедии',body:x.body,date:dateLabel()});saveData();renderLatest();toast('Добавлено в Книгу Теней')})}
+$('librarySearch').addEventListener('input',e=>renderLibrary(e.target.value));
+const practices={grounding:{title:'Практика опоры',steps:['Устройся удобно и почувствуй опору под телом.','Назови пять предметов вокруг и три звука, которые слышишь.','Сделай несколько спокойных, комфортных вдохов.','Запиши одно конкретное действие, которое поможет тебе сегодня.']},selflove:{title:'Практика заботы о себе',steps:['Сделай паузу и спроси себя: что мне сейчас нужно?','Запиши три вещи, за которые можешь поблагодарить себя.','Выбери одно небольшое действие заботы на ближайшие сутки.']},clarity:{title:'Практика ясности',steps:['Запиши вопрос, который занимает твои мысли.','Раздели лист на две части: что я знаю и что предполагаю.','Выбери один проверяемый следующий шаг.']},release:{title:'Практика завершения',steps:['Запиши, что больше не хочешь нести с собой.','Отдели то, что можешь изменить, от того, что вне твоего контроля.','Выбери безопасный символ завершения: закрыть блокнот, убрать лист или сделать паузу.']},abundance:{title:'Практика внимания к изобилию',steps:['Запиши, что для тебя означает достаток в реальных жизненных условиях.','Отметь три ресурса, которые уже доступны: время, навыки, поддержка или возможности.','Выбери один практический шаг к финансовой или личной цели.']}};
+$('buildPractice').onclick=()=>{let p=practices[$('intent').value];currentPractice=p;$('practiceResult').innerHTML=`<div class="card"><div class="eyebrow">ТВОЯ ПРАКТИКА</div><h3>${esc(p.title)}</h3><ol>${p.steps.map(s=>`<li style="margin:8px 0">${esc(s)}</li>`).join('')}</ol><p>Продолжительность: 5–10 минут. Выполняй только то, что комфортно и безопасно для тебя.</p></div>`;$('savePractice').disabled=false};
+$('savePractice').onclick=()=>{if(!currentPractice)return;data.entries.unshift({id:String(Date.now()),title:currentPractice.title,type:'Практика',body:currentPractice.steps.map((s,i)=>(i+1)+'. '+s).join('\n'),date:dateLabel()});saveData();renderLatest();toast('Практика сохранена в Книге Теней')};
+function doSearch(q){let results=[];if(!q){$('searchResults').innerHTML='<div class="empty">Введи слово или тему для поиска.</div>';return}library.forEach(x=>{if((x.title+' '+x.category+' '+x.tags+' '+x.body).toLowerCase().includes(q.toLowerCase()))results.push({title:x.title,desc:x.category+' · '+x.body,go:'library'})});data.entries.forEach(x=>{if((x.title+' '+x.body+' '+x.type).toLowerCase().includes(q.toLowerCase()))results.push({title:x.title,desc:'Книга Теней · '+x.body,go:'book'})});$('searchResults').innerHTML=results.length?results.map(x=>`<div class="card"><h3>${esc(x.title)}</h3><p>${esc(x.desc).slice(0,220)}</p></div>`).join(''):'<div class="empty">Совпадений нет.</div>'}
+$('globalSearch').addEventListener('input',e=>doSearch(e.target.value));
+$('exportData').onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='grimuar-backup.json';a.click();URL.revokeObjectURL(url);toast('Резервная копия подготовлена')};
+$('clearData').onclick=()=>{if(confirm('Точно удалить все локальные записи и наблюдения? Это действие нельзя отменить.')){data={entries:[],moonNotes:{}};saveData();renderEntries();renderLatest();renderMoon();toast('Локальные данные удалены')}};
+renderMoon();renderLatest();renderEntries();renderLibrary();
+fetch('./encyclopedia.json').then(r=>r.ok?r.json():Promise.reject(new Error('Статьи не загружены'))).then(extra=>{
+  if(Array.isArray(extra)){
+   library=library.concat(extra.map(x=>({...x,category:x.category+' · редакционный черновик'})));
+   renderLibrary($('librarySearch').value);
+  }
+}).catch(e=>console.warn('COVEN encyclopedia:',e));
+})();
+</script>
+<script src="./coven.js"></script>
+</body>
+</html>
