@@ -6,7 +6,7 @@
  const base=(config.apiUrl||'').replace(/\/$/,'');
  const ready=!!(base&&tg?.initData);
  let self=null, currentCategory='',onlyFollowing=false,feedOffset=0,moreFeed=false,feedBusy=false;
- let currentProfileId=null,currentPostId=null,previewUrl=null,fileToUpload=null;
+ let currentProfileId=null,currentPostId=null,previewUrl=null,fileToUpload=null,avatarFile=null,avatarPreviewUrl=null;
  const esc=(s)=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
  const avatar=(person,large=false)=>`<div class="coven-avatar${large?' lg':''}">${person?.photo_url?`<img loading="lazy" referrerpolicy="no-referrer" alt="" src="${esc(person.photo_url)}" onerror="this.remove()">`:esc((person?.display_name||'✦').slice(0,1).toUpperCase())}</div>`;
  const notify=(s)=>{if(typeof window.covenToast==='function')window.covenToast(s);else alert(s);};
@@ -71,9 +71,9 @@
   }catch(e){$('peopleList').innerHTML=block(esc(e.message),'error');}
  }
  function stats(p){return `<div class="coven-stats"><div><strong>${Number(p.posts_count)||0}</strong>публикаций</div><div><strong>${Number(p.followers_count)||0}</strong>читателей</div><div><strong>${Number(p.following_count)||0}</strong>подписок</div></div>`;}
- function renderSelf(){if(!self)return;
+ function renderSelf(){if(!self)return;$('welcomeName').textContent=(self.display_name||'ведьма').split(' ')[0];
   $('myProfile').innerHTML=`<div class="coven-profile-cover"><div class="coven-profile-top">${avatar(self,true)}<div><h2>${esc(self.display_name)}</h2><p>✦ ${esc(self.element)}${self.telegram_username?' · @'+esc(self.telegram_username):''}</p></div></div>${stats(self)}<div class="coven-profile-bio">${esc(self.bio||'Напиши пару слов о своей магической стороне…')}</div><div class="coven-profile-btns"><button class="primary" data-go="edit-profile">Редактировать профиль</button><button class="secondary" data-go="book">Моя Книга Теней</button></div></div>`;
-  $('editName').value=self.display_name||'';$('editBio').value=self.bio||'';$('editElement').value=self.element||'Луна';
+  $('editName').value=self.display_name||'';$('editBio').value=self.bio||'';$('editElement').value=self.element||'Луна';$('avatarCurrent').innerHTML=avatar(self,true);$('deleteAvatar').style.display=self.photo_url?'inline-flex':'none';
   $('myProfile').querySelectorAll('[data-go]').forEach(button=>button.addEventListener('click',()=>show(button.dataset.go)));
  }
  async function loadMyPosts(){if(!ready||!self)return;
@@ -120,6 +120,45 @@
    throw new Error('Слишком сложное изображение. Выбери фото поменьше.');
   }finally{URL.revokeObjectURL(objectUrl);}
  }
+
+ async function prepareAvatarPhoto(file){
+  if(!file.type.startsWith('image/'))throw new Error('Выбери фотографию из галереи');
+  if(file.size>10*1024*1024)throw new Error('Выбери фотографию размером до 10 МБ');
+  const url=URL.createObjectURL(file);
+  try{
+   const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('Не удалось открыть фотографию'));img.src=url;});
+   const canvas=document.createElement('canvas');canvas.width=600;canvas.height=600;
+   const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Обработка фото недоступна');
+   const length=Math.min(img.naturalWidth,img.naturalHeight),sx=(img.naturalWidth-length)/2,sy=(img.naturalHeight-length)/2;
+   ctx.fillStyle='#f2e1c1';ctx.fillRect(0,0,600,600);ctx.drawImage(img,sx,sy,length,length,0,0,600,600);
+   const compress=(mime,quality)=>new Promise(resolve=>canvas.toBlob(resolve,mime,quality));
+   for(let q=.83;q>=.38;q-=.09){let b=await compress('image/webp',q);if(!b||b.type!=='image/webp')b=await compress('image/jpeg',q);if(b&&b.size<=240*1024&&b.size>=16)return b;}
+   throw new Error('Фото не удалось сжать, выбери изображение поменьше');
+  }finally{URL.revokeObjectURL(url);}
+ }
+ $('avatarImage').addEventListener('change',e=>{
+  avatarFile=e.target.files?.[0]||null;
+  if(avatarPreviewUrl)URL.revokeObjectURL(avatarPreviewUrl);
+  avatarPreviewUrl=avatarFile?URL.createObjectURL(avatarFile):null;
+  $('avatarPreviewBox').classList.toggle('coven-hidden',!avatarFile);
+  if(avatarPreviewUrl)$('avatarPreview').src=avatarPreviewUrl;
+  $('uploadAvatar').disabled=!avatarFile||!ready;
+ });
+ $('uploadAvatar').onclick=async()=>{
+  if(!ready)return notify(setupMsg);if(!avatarFile)return notify('Сначала выбери фотографию');
+  const btn=$('uploadAvatar');btn.disabled=true;btn.textContent='Сохраняем портрет…';
+  try{
+   const blob=await prepareAvatarPhoto(avatarFile);
+   await request('/api/me/avatar',{method:'POST',headers:{'Content-Type':blob.type},body:blob});
+   avatarFile=null;$('avatarImage').value='';if(avatarPreviewUrl)URL.revokeObjectURL(avatarPreviewUrl);avatarPreviewUrl=null;
+   $('avatarPreviewBox').classList.add('coven-hidden');await refreshMe();notify('Твой портрет появился в COVEN ✦');
+  }catch(e){notify(e.message);}finally{btn.textContent='Сохранить аватар';btn.disabled=!avatarFile;}
+ };
+ $('deleteAvatar').onclick=async()=>{
+  if(!ready)return notify(setupMsg);
+  if(!confirm('Убрать собственный аватар из COVEN?'))return;
+  try{await request('/api/me/avatar',{method:'DELETE'});await refreshMe();notify('Аватар удалён');}catch(e){notify(e.message);}
+ };
  function resetCompose(){fileToUpload=null; if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=null;$('postText').value='';$('postImage').value='';$('postPreview').innerHTML='';}
  $('postImage').addEventListener('change',e=>{fileToUpload=e.target.files?.[0]||null;if(previewUrl)URL.revokeObjectURL(previewUrl);if(fileToUpload){previewUrl=URL.createObjectURL(fileToUpload);$('postPreview').innerHTML=`<img class="coven-media-preview" alt="Предпросмотр" src="${previewUrl}"><p class="coven-tiny">Фотографии в ленте будут доступны всем участникам.</p>`;}else $('postPreview').innerHTML='';});
  $('publishPost').onclick=async()=>{
